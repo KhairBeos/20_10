@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng 20/10</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Hoa rơi */
+        .flower {
+            position: absolute;
+            font-size: 25px;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                opacity: 0.8;
+            }
+            100% {
+                top: 110%;
+                opacity: 0;
+            }
+        }
+
+        .container {
+            perspective: 1000px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Phong bì */
+        .envelope {
+            width: 350px;
+            height: 250px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope-base {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%);
+            transform-origin: top center;
+            transition: transform 0.8s ease;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 3;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            animation: heartbeat 1.5s ease infinite;
+            z-index: 2;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .envelope-text {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d63031;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 2;
+        }
+
+        /* Bức thư */
+        .letter {
+            position: absolute;
+            width: 400px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 20;
+            overflow-y: auto;
+        }
+
+        .letter.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #ff7675;
+            padding-bottom: 20px;
+        }
+
+        .letter-header h1 {
+            color: #d63031;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .letter-date {
+            color: #636e72;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .letter-content {
+            color: #2d3436;
+            line-height: 1.8;
+            font-size: 16px;
+            text-align: justify;
+        }
+
+        .letter-content p {
+            margin-bottom: 15px;
+        }
+
+        .letter-signature {
+            text-align: right;
+            margin-top: 30px;
+            color: #d63031;
+            font-style: italic;
+            font-size: 18px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            background: #ff7675;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #d63031;
+            transform: rotate(90deg);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 15;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .envelope {
+                width: 300px;
+                height: 200px;
+            }
+
+            .letter {
+                width: 90%;
+                padding: 30px 20px;
+            }
+
+            .letter-header h1 {
+                font-size: 24px;
+            }
+
+            .letter-content {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="envelope" id="envelope">
+            <div class="envelope-base">
+                <div class="envelope-flap"></div>
+                <div class="envelope-heart">💌</div>
+                <div class="envelope-text">Nhấn để mở thư</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="letter" id="letter">
+        <button class="close-btn" id="closeBtn">×</button>
+        <div class="letter-header">
+            <h1>🌸 Chúc Mừng 20/10 🌸</h1>
+            <p class="letter-date">Ngày 20 tháng 10 năm 2025</p>
+        </div>
+        <div class="letter-content">
+          <p><strong>Gửi mẹ và em,</strong></p>
+      
+          <p>Nhân dịp Ngày Phụ Nữ Việt Nam 20/10, con/cháu xin gửi đến mẹ và em những lời chúc tốt đẹp nhất.</p>
+      
+          <p>Chúc mẹ luôn mạnh khỏe, vui vẻ và hạnh phúc mỗi ngày. Mẹ mãi là người phụ nữ tuyệt vời nhất, luôn là điểm tựa vững vàng cho cả gia đình.</p>
+      
+          <p>Chúc em luôn tự tin, học giỏi và ngày càng trưởng thành hơn. Mong em luôn giữ được niềm vui, sự hồn nhiên và đạt được những điều mình mong muốn.</p>
+      
+          <p>Hai mẹ con xứng đáng nhận được thật nhiều yêu thương, những điều tốt đẹp và những nụ cười trọn vẹn nhất trong ngày đặc biệt này. 💐</p>
+      </div>
+      
+      <div class="letter-signature">
+          <p>Thân gửi,</p>
+          <p>Con/Anh Khải💕</p>
+      </div>
+
+
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const letter = document.getElementById('letter');
+        const overlay = document.getElementById('overlay');
+        const closeBtn = document.getElementById('closeBtn');
+
+        // Tạo hoa rơi
+        function createFlower() {
+            const flowers = ['🌸', '🌺', '🌼', '🌻', '🌷', '🌹', '💐'];
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+            flower.style.left = Math.random() * 100 + '%';
+            flower.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            flower.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(flower);
+
+            setTimeout(() => {
+                flower.remove();
+            }, 8000);
+        }
+
+        // Tạo hoa liên tục
+        setInterval(createFlower, 300);
+
+        // Mở thư
+        envelope.addEventListener('click', () => {
+            envelope.classList.add('open');
+            setTimeout(() => {
+                letter.classList.add('show');
+                overlay.classList.add('show');
+            }, 400);
+        });
+
+        // Đóng thư
+        function closeLetter() {
+            letter.classList.remove('show');
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                envelope.classList.remove('open');
+            }, 400);
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLetter();
+        });
+
+        overlay.addEventListener('click', closeLetter);
+
+        // Khởi tạo một vài hoa ban đầu
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createFlower, i * 200);
+        }
+    </script>
+</body>
+</html>
