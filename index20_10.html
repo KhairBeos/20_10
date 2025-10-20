@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng 20/10</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Hoa rơi */
+        .flower {
+            position: absolute;
+            font-size: 25px;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                opacity: 0.8;
+            }
+            100% {
+                top: 110%;
+                opacity: 0;
+            }
+        }
+
+        .container {
+            perspective: 1000px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Phong bì */
+        .envelope {
+            width: 350px;
+            height: 250px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope-base {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%);
+            transform-origin: top center;
+            transition: transform 0.8s ease;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 3;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            animation: heartbeat 1.5s ease infinite;
+            z-index: 2;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .envelope-text {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d63031;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 2;
+        }
+
+        /* Nút tạo QR */
+        .qr-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #d63031;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qr-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            background: #ffe5e5;
+        }
+
+        /* Modal QR */
+        .qr-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            z-index: 101;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .qr-modal.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .qr-modal h2 {
+            color: #d63031;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .qr-input-group {
+            margin-bottom: 20px;
+        }
+
+        .qr-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .qr-input:focus {
+            outline: none;
+            border-color: #d63031;
+        }
+
+        .qr-generate-btn {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .qr-generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(214, 48, 49, 0.3);
+        }
+
+        #qrcode {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .qr-instructions {
+            color: #636e72;
+            font-size: 14px;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        .qr-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            background: #ff7675;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .qr-close:hover {
+            background: #d63031;
+            transform: rotate(90deg);
+        }
+
+        /* Bức thư */
+        .letter {
+            position: absolute;
+            width: 400px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 20;
+            overflow-y: auto;
+        }
+
+        .letter.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #ff7675;
+            padding-bottom: 20px;
+        }
+
+        .letter-header h1 {
+            color: #d63031;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .letter-date {
+            color: #636e72;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .letter-content {
+            color: #2d3436;
+            line-height: 1.8;
+            font-size: 16px;
+            text-align: justify;
+        }
+
+        .letter-content p {
+            margin-bottom: 15px;
+        }
+
+        .letter-signature {
+            text-align: right;
+            margin-top: 30px;
+            color: #d63031;
+            font-style: italic;
+            font-size: 18px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            background: #ff7675;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #d63031;
+            transform: rotate(90deg);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 15;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .envelope {
+                width: 300px;
+                height: 200px;
+            }
+
+            .letter {
+                width: 90%;
+                padding: 30px 20px;
+            }
+
+            .letter-header h1 {
+                font-size: 24px;
+            }
+
+            .letter-content {
+                font-size: 14px;
+            }
+
+            .qr-button {
+                top: 10px;
+                right: 10px;
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .qr-modal {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nút tạo QR Code -->
+    <button class="qr-button" id="qrBtn">
+        📱 Tạo QR Code
+    </button>
+
+    <!-- Modal QR Code -->
+    <div class="qr-modal" id="qrModal">
+        <button class="qr-close" id="qrCloseBtn">×</button>
+        <h2>🎁 Tạo QR Code Chia Sẻ</h2>
+        <div class="qr-input-group">
+            <p style="color: #636e72; font-size: 14px; margin-bottom: 10px;">
+                Nhập link trang web của bạn (sau khi upload lên hosting)
+            </p>
+            <input type="text" class="qr-input" id="urlInput" placeholder="https://yourwebsite.com">
+            <button class="qr-generate-btn" id="generateBtn">Tạo QR Code</button>
+        </div>
+        <div id="qrcode"></div>
+        <div class="qr-instructions">
+            <p><strong>Hướng dẫn:</strong></p>
+            <p>1. Upload file HTML này lên GitHub Pages, Netlify hoặc Vercel</p>
+            <p>2. Copy link trang web vào ô trên</p>
+            <p>3. Nhấn "Tạo QR Code"</p>
+            <p>4. Chụp ảnh QR và gửi cho chị gái quét!</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="envelope" id="envelope">
+            <div class="envelope-base">
+                <div class="envelope-flap"></div>
+                <div class="envelope-heart">💌</div>
+                <div class="envelope-text">Nhấn để mở thư</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="letter" id="letter">
+        <button class="close-btn" id="closeBtn">×</button>
+        <div class="letter-header">
+            <h1>🌸 Chúc Mừng 20/10 🌸</h1>
+            <p class="letter-date">Ngày 20 tháng 10 năm 2025</p>
+        </div>
+        <div class="letter-content">
+            <p><strong>Gửi chị gái yêu quý,</strong></p>
+            
+            <p>Nhân dịp Ngày Phụ Nữ Việt Nam 20/10, em muốn gửi đến chị những lời chúc tốt đẹp nhất. Chị là người luôn là chỗ dựa vững chắc, là tấm gương tuyệt vời để em noi theo.</p>
+            
+            <p>Em chúc chị luôn tươi trẻ, xinh đẹp và rạng rỡ như những bông hoa trong mùa xuân. Chúc chị luôn mạnh khỏe, hạnh phúc và thành công trong mọi lĩnh vực của cuộc sống.</p>
+            
+            <p>Cảm ơn chị vì đã luôn ở bên cạnh, động viên và che chở cho em. Tình cảm anh em của chúng mình sẽ mãi mãi bền chặt như thế này nhé!</p>
+            
+            <p>Chị xứng đáng được yêu thương, được trân trọng và được tận hưởng những điều tuyệt vời nhất trong cuộc sống này.</p>
+            
+            <p>Chúc chị 20/10 thật nhiều niềm vui và hạnh phúc! 💐</p>
+        </div>
+        <div class="letter-signature">
+            <p>Yêu chị nhiều,</p>
+            <p>Em của chị 💕</p>
+        </div>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const letter = document.getElementById('letter');
+        const overlay = document.getElementById('overlay');
+        const closeBtn = document.getElementById('closeBtn');
+        const qrBtn = document.getElementById('qrBtn');
+        const qrModal = document.getElementById('qrModal');
+        const qrCloseBtn = document.getElementById('qrCloseBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const urlInput = document.getElementById('urlInput');
+        let qrcodeObj = null;
+
+        // Tạo hoa rơi
+        function createFlower() {
+            const flowers = ['🌸', '🌺', '🌼', '🌻', '🌷', '🌹', '💐'];
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+            flower.style.left = Math.random() * 100 + '%';
+            flower.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            flower.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(flower);
+
+            setTimeout(() => {
+                flower.remove();
+            }, 8000);
+        }
+
+        // Tạo hoa liên tục
+        setInterval(createFlower, 300);
+
+        // Mở thư
+        envelope.addEventListener('click', () => {
+            envelope.classList.add('open');
+            setTimeout(() => {
+                letter.classList.add('show');
+                overlay.classList.add('show');
+            }, 400);
+        });
+
+        // Đóng thư
+        function closeLetter() {
+            letter.classList.remove('show');
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                envelope.classList.remove('open');
+            }, 400);
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLetter();
+        });
+
+        overlay.addEventListener('click', closeLetter);
+
+        // Mở modal QR
+        qrBtn.addEventListener('click', () => {
+            qrModal.classList.add('show');
+            overlay.classList.add('show');
+        });
+
+        // Đóng modal QR
+        qrCloseBtn.addEventListener('click', () => {
+            qrModal.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        // Tạo QR Code
+        generateBtn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            if (!url) {
+                alert('Vui lòng nhập link trang web!');
+                return;
+            }
+
+            // Xóa QR code cũ nếu có
+            document.getElementById('qrcode').innerHTML = '';
+
+            // Tạo QR code mới
+            qrcodeObj = new QRCode(document.getElementById('qrcode'), {
+                text: url,
+                width: 250,
+                height: 250,
+                colorDark: '#d63031',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+
+        // Khởi tạo một vài hoa ban đầu
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createFlower, i * 200);
+        }
+    </script>
+</body>
+</html>
