@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo QR Code - Thư 20/10</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #d63031;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #636e72;
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #2d3436;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #d63031;
+            box-shadow: 0 0 0 3px rgba(214, 48, 49, 0.1);
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(214, 48, 49, 0.3);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .qr-result {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .qr-result.show {
+            display: block;
+        }
+
+        #qrcode {
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-btn {
+            background: #00b894;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background: #00a383;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .instructions ol {
+            color: #856404;
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .instructions a {
+            color: #d63031;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .instructions a:hover {
+            text-decoration: underline;
+        }
+
+        .hosting-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .hosting-link {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #dfe6e9;
+            transition: all 0.3s;
+        }
+
+        .hosting-link:hover {
+            border-color: #d63031;
+            transform: translateY(-2px);
+        }
+
+        .hosting-link a {
+            color: #2d3436;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .hosting-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Tạo QR Code</h1>
+            <p>Để chia sẻ thư 20/10 cho chị gái</p>
+        </div>
+
+        <div class="input-group">
+            <label for="urlInput">🔗 Nhập link trang web của bạn:</label>
+            <input type="text" id="urlInput" placeholder="https://your-website.netlify.app">
+        </div>
+
+        <button class="generate-btn" id="generateBtn">
+            ✨ Tạo QR Code
+        </button>
+
+        <div class="qr-result" id="qrResult">
+            <h3 style="color: #2d3436; margin-bottom: 15px;">🎉 QR Code của bạn!</h3>
+            <div id="qrcode"></div>
+            <p style="color: #636e72; margin-top: 10px;">
+                Nhấn chuột phải vào QR code và chọn "Save image as..." để tải về
+            </p>
+            <button class="download-btn" id="downloadBtn">
+                💾 Tải QR Code
+            </button>
+        </div>
+
+        <div class="instructions">
+            <h3>📝 Hướng dẫn chi tiết:</h3>
+            <ol>
+                <li>
+                    <strong>Lưu file thư:</strong> Lưu file HTML trang thư với tên <code>index.html</code>
+                </li>
+                <li>
+                    <strong>Upload lên hosting miễn phí:</strong>
+                    <div class="hosting-links">
+                        <div class="hosting-link">
+                            <a href="https://netlify.com" target="_blank">📦 Netlify</a>
+                        </div>
+                        <div class="hosting-link">
+                            <a href="https://pages.github.com" target="_blank">🐙 GitHub Pages</a>
+                        </div>
+                        <div class="hosting-link">
+                            <a href="https://vercel.com" target="_blank">▲ Vercel</a>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <strong>Copy link:</strong> Sau khi upload, bạn sẽ nhận được link (vd: <em>your-site.netlify.app</em>)
+                </li>
+                <li>
+                    <strong>Tạo QR:</strong> Paste link vào ô trên và nhấn "Tạo QR Code"
+                </li>
+                <li>
+                    <strong>Chia sẻ:</strong> Tải QR code và gửi cho chị gái qua Zalo/Messenger
+                </li>
+            </ol>
+            <p style="margin-top: 15px; color: #856404;">
+                💡 <strong>Mẹo:</strong> Netlify là dễ nhất - chỉ cần kéo thả file vào là xong!
+            </p>
+        </div>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const qrResult = document.getElementById('qrResult');
+        const downloadBtn = document.getElementById('downloadBtn');
+        let qrcodeObj = null;
+
+        // Tạo QR Code
+        generateBtn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                alert('❌ Vui lòng nhập link trang web!');
+                return;
+            }
+
+            // Kiểm tra định dạng URL
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                alert('❌ Link phải bắt đầu bằng http:// hoặc https://\n\nVí dụ: https://your-site.netlify.app');
+                return;
+            }
+
+            // Xóa QR code cũ nếu có
+            document.getElementById('qrcode').innerHTML = '';
+
+            // Tạo QR code mới
+            qrcodeObj = new QRCode(document.getElementById('qrcode'), {
+                text: url,
+                width: 280,
+                height: 280,
+                colorDark: '#d63031',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Hiển thị kết quả
+            qrResult.classList.add('show');
+
+            // Scroll đến QR code
+            setTimeout(() => {
+                qrResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        });
+
+        // Tải QR Code
+        downloadBtn.addEventListener('click', () => {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = 'qr-code-thu-20-10.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+        });
+
+        // Enter để tạo QR
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                generateBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
